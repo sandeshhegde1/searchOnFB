@@ -7,29 +7,30 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import com.example.sanh.facebook.Adapters.PagerAdapter;
+import com.example.sanh.facebook.Adapters.DetailsAdapter;
 
 /**
- * Created by San H on 4/23/2017.
+ * Created by San H on 4/24/2017.
  */
-public class ResultActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
-    private String keyword;
+    private String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.result_main);
+        setContentView(R.layout.detail_main);
 
-        keyword = getIntent().getStringExtra("EXTRA_INPUT");
+        id = getIntent().getStringExtra("EXTRA_ID");
+
         setupToolbar();
         initTabs();
         setupViewPager();
 
 
-    }
 
+    }
 
     private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -37,9 +38,10 @@ public class ResultActivity extends AppCompatActivity {
 
         //set image for opening navigation view
         final ActionBar ab = getSupportActionBar();
-       // ab.setHomeAsUpIndicator(R.drawable.ic_keyboard_backspace_black_24dp);
-      //  ab.setDisplayHomeAsUpEnabled(true);
-      //  ab.setTitle("Results");
+        //TODO
+        // ab.setHomeAsUpIndicator(R.drawable.ic_keyboard_backspace_black_24dp);
+        //  ab.setDisplayHomeAsUpEnabled(true);
+        //  ab.setTitle("Results");
 
 
     }
@@ -47,20 +49,18 @@ public class ResultActivity extends AppCompatActivity {
     private void initTabs(){
 
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.users).setText("Users"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.pages).setText("Pages"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.events).setText("Events"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.places).setText("Places"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.groups).setText("Groups"));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.albums).setText("Albums"));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.posts).setText("Posts"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
     }
 
+
     private void setupViewPager(){
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        final PagerAdapter adapter = new PagerAdapter
-                (getSupportFragmentManager(), tabLayout.getTabCount(),keyword);
+        final DetailsAdapter adapter = new DetailsAdapter
+                (getSupportFragmentManager(), tabLayout.getTabCount(),id);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
@@ -68,4 +68,3 @@ public class ResultActivity extends AppCompatActivity {
 
 
 }
-
