@@ -11,16 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.example.sanh.facebook.Adapters.ListAdaptor;
 import com.example.sanh.facebook.DetailsActivity;
 import com.example.sanh.facebook.Models.ListModel;
 import com.example.sanh.facebook.R;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -51,14 +50,20 @@ public class UserFragment extends Fragment {
     private boolean isPreviousPresent;
     private String nextURL;
     private String previousURL;
+    private ListAdaptor adapter;
+
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+
+
         View v = inflater.inflate(R.layout.user_fragment,container,false);
         key = getArguments().getString("key");
+
+        //TODO change page to user
         url_string = "http://sandeshwebtech-env.us-west-2.elasticbeanstalk.com/index.php?input_keyword=" + key + "&select=user&input_location=&submit=TRUE&device=android";
         userListData=new ArrayList<>();
         userlv=(ListView) v.findViewById(R.id.user_listView);
@@ -73,10 +78,17 @@ public class UserFragment extends Fragment {
                     public void onItemClick(AdapterView<?> arg0, View arg1,
                                             int position, long arg3) {
 
-                           // Get the selected model id and send to detail activity.
+                           // Get the selected model ,its id,its type  and send to detail activity.
                            String sendID = userListData.get(position).getID();
+                           // get rowData and convert to string using gson
+                           ListModel rowData=userListData.get(position);
+                           String jsonRowData = new Gson().toJson(rowData);
+
+                           String type="user";
                            Intent intent =new Intent(getActivity(), DetailsActivity.class);
                            intent.putExtra("EXTRA_ID",sendID);
+                           intent.putExtra("EXTRA_TYPE",type);
+                           intent.putExtra("EXTRA_ROW",jsonRowData);
                            startActivity(intent);
 
 
@@ -112,6 +124,8 @@ public class UserFragment extends Fragment {
 
         return v;
     }
+
+
 
     private  class getJSON extends AsyncTask<Void, Void, Void> {
 
@@ -180,7 +194,7 @@ public class UserFragment extends Fragment {
         @Override
         protected void onPostExecute(Void result) {
 
-            ListAdaptor adapter = new ListAdaptor(getActivity(), userListData);
+            adapter = new ListAdaptor(getActivity(), userListData);
             userlv.setAdapter(adapter);
             adapter.notifyDataSetChanged();
 
@@ -260,5 +274,15 @@ public class UserFragment extends Fragment {
     }
 
 
+    @Override
+    public void onResume() {
 
+        if(adapter!=null){
+            adapter = new ListAdaptor(getActivity(), userListData);
+            userlv.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
+
+        super.onResume();
+    }
 }

@@ -1,17 +1,15 @@
 package com.example.sanh.facebook.Models;
 
-import android.os.Parcelable;
-
-import java.io.Serializable;
-
 /**
- * Created by San H on 4/23/2017.
+ * Created by San H on 4/24/2017.
  */
-public class ListModel {
+public class PostModel {
 
     String id;
     String name;
     String imageURL;
+    String time;
+    String message;
     Boolean fav;
 
     public String getName() {
@@ -56,14 +54,36 @@ public class ListModel {
         this.fav =fav;
     }
 
+    public String getTime() {
+        return time;
+    }
 
 
-    public ListModel(String id, String name, String imageURL,Boolean fav) {
+    public void setTime(String time) {
+
+        this.time=time;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+
+    public void setMessage(String message) {
+
+        this.message =message;
+    }
+
+
+
+    public PostModel(String id, String name, String imageURL,String time, String message,Boolean fav) {
         // TODO Auto-generated constructor stub
         this.name = name;
         this.id = id;
         this.imageURL = imageURL;
         this.fav=fav;
+        this.time=time;
+        this.message=message;
     }
 }
 

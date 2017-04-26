@@ -2,6 +2,8 @@ package com.example.sanh.facebook.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +13,11 @@ import android.widget.TextView;
 
 import com.example.sanh.facebook.Models.ListModel;
 import com.example.sanh.facebook.R;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -22,11 +27,36 @@ public class ListAdaptor extends BaseAdapter {
 
     private Activity activity;
     private List<ListModel> items;
+    private List<String> idFavList;
+    private boolean isIdListPresent;
+
+
 
 
     public ListAdaptor(Activity activity, List<ListModel> items) {
         this.activity = activity;
         this.items = items;
+
+        SharedPreferences sharedPref= activity.getSharedPreferences("my_pref",Context.MODE_PRIVATE);
+        String jsonIdFavList =sharedPref.getString("idFavList", null);
+
+        if(jsonIdFavList!=null) {
+
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<String>>() {
+            }.getType();
+            idFavList = gson.fromJson(jsonIdFavList, type);
+            isIdListPresent=true;
+
+        }else{
+            isIdListPresent=false;
+
+
+        }
+
+
+
+
     }
 
 
@@ -71,7 +101,12 @@ public class ListAdaptor extends BaseAdapter {
 
         //TODO  get the id and check with fav array to set fav icon color
 
-        favImage.setImageResource(R.drawable.favorites_off);
+
+        if((isIdListPresent)&& (idFavList.contains(items.get(position).getID()))){
+            favImage.setImageResource(R.drawable.favorites_on);
+        }else {
+            favImage.setImageResource(R.drawable.favorites_off);
+        }
         details.setImageResource(R.drawable.ic_keyboard_arrow_down_black_24dp);
 
         return view;
