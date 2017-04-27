@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.sanh.facebook.R;
 import com.example.sanh.facebook.ResultActivity;
@@ -36,10 +37,14 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v)
             {
-                String keyword=input.getText().toString();
-                Intent intent = new Intent(getActivity(), ResultActivity.class);
-                intent.putExtra("EXTRA_INPUT",keyword);
-                startActivity(intent);
+                String keyword=input.getText().toString().trim();
+                if(keyword==null||keyword.length()==0||keyword.equals("")||keyword.isEmpty()){
+                    Toast.makeText(getActivity(),"Please enter a keyword!",Toast.LENGTH_LONG).show();
+                }else {
+                    Intent intent = new Intent(getActivity(), ResultActivity.class);
+                    intent.putExtra("EXTRA_INPUT", keyword);
+                    startActivity(intent);
+                }
             }
         });
 

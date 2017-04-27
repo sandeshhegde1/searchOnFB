@@ -1,5 +1,7 @@
 package com.example.sanh.facebook;
 
+import android.Manifest;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -15,6 +17,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.sanh.facebook.Fragments.AboutFragment;
+import com.example.sanh.facebook.Fragments.FavFragment;
 import com.example.sanh.facebook.Fragments.MainFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,10 +32,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+         //getSharedPreferences("my_pref",MODE_PRIVATE).edit().clear().commit();
+
 
         //ask for permissions to the user to gain access to the external storage
         int permissionCheck1 = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
         int permissionCheck2 = ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+     //   int permissionCheck3 = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+     //   int permissionCheck4 = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+
 
         if (permissionCheck1 != PackageManager.PERMISSION_GRANTED || permissionCheck2 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -135,7 +143,9 @@ public class MainActivity extends AppCompatActivity {
                                 return true;
 
                             case R.id.nav_fav:
-                                Toast.makeText(getApplicationContext(),"fav",Toast.LENGTH_SHORT).show();
+                                FavFragment favfragment=new FavFragment();
+                                fragmentTransaction.replace(R.id.frame,favfragment);
+                                fragmentTransaction.commit();
                                 return true;
 
                             case R.id.nav_about:

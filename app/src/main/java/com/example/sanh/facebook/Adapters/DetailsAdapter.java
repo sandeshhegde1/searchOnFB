@@ -9,6 +9,7 @@ import com.example.sanh.facebook.Fragments.AlbumFragment;
 import com.example.sanh.facebook.Fragments.PostFragment;
 
 
+
 /**
  * Created by San H on 4/24/2017.
  */
@@ -17,6 +18,7 @@ public class DetailsAdapter extends FragmentStatePagerAdapter {
     private int mNumOfTabs;
 
     private Bundle bundle;
+
 
     public DetailsAdapter(FragmentManager fm, int NumOfTabs, String key) {
         super(fm);

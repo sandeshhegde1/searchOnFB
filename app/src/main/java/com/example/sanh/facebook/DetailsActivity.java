@@ -1,7 +1,9 @@
 package com.example.sanh.facebook;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -11,10 +13,17 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.sanh.facebook.Adapters.DetailsAdapter;
 import com.example.sanh.facebook.Fragments.UserFragment;
 import com.example.sanh.facebook.Models.ListModel;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -39,6 +48,9 @@ public class DetailsActivity extends AppCompatActivity {
     private List<ListModel> eventFavList;
     private List<ListModel> groupFavList;
     private List<String> idFavList;
+
+    private ShareDialog mShareDialog;
+    private CallbackManager mCallBackManager;
 
 
 
@@ -147,7 +159,25 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
 
+        mCallBackManager = CallbackManager.Factory.create();
+        mShareDialog = new ShareDialog(this);
+        mShareDialog.registerCallback(mCallBackManager, new FacebookCallback<Sharer.Result>(){
+            @Override
+            public void onSuccess(Sharer.Result result) {
+                Log.d("fb", " success" + result.getPostId());
+            }
 
+            @Override
+            public void onCancel() {
+                Toast.makeText(DetailsActivity.this, "Sharing cancelled", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Toast.makeText(DetailsActivity.this, "Error while sharing", Toast.LENGTH_LONG).show();
+            }
+
+        });
 
 
 
@@ -193,6 +223,22 @@ public class DetailsActivity extends AppCompatActivity {
                 (getSupportFragmentManager(), tabLayout.getTabCount(),id);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
     }
 
@@ -224,36 +270,44 @@ public class DetailsActivity extends AppCompatActivity {
                     editor.putString("idFavList",jsonIdFavList);
 
                     if(type.equals("user")){
-                        userFavList.remove(rowData);
+
+                        int i=getIndex(userFavList,id);
+                        userFavList.remove(i);
                         String jsonUserFavList = new Gson().toJson(userFavList);
                         editor.putString("userFavList",jsonUserFavList);
+                        Log.d("user removed",jsonUserFavList);
 
 
                     }else if(type.equals("place")){
-                        placeFavList.remove(rowData);
+                        int i=getIndex(placeFavList,id);
+                        placeFavList.remove(i);
                         String jsonPlaceFavList = new Gson().toJson(placeFavList);
                         editor.putString("placeFavList",jsonPlaceFavList);
 
 
                     }else if(type.equals("page")){
-                        pageFavList.remove(rowData);
+                        int i=getIndex(pageFavList,id);
+                        pageFavList.remove(i);
                         String jsonPageFavList = new Gson().toJson(pageFavList);
                         editor.putString("pageFavList",jsonPageFavList);
 
                     }else if(type.equals("event")){
 
-                        eventFavList.remove(rowData);
+                        int i=getIndex(eventFavList,id);
+                        eventFavList.remove(i);
                         String jsonEventFavList = new Gson().toJson(eventFavList);
                         editor.putString("eventFavList",jsonEventFavList);
 
                     }else if(type.equals("group")) {
 
-                        groupFavList.remove(rowData);
+                        int i=getIndex(groupFavList,id);
+                        groupFavList.remove(i);
                         String jsonGroupFavList = new Gson().toJson(groupFavList);
                         editor.putString("groupFavList",jsonGroupFavList);
                     }
 
                     editor.commit();
+                    Toast.makeText(this,"Removed from Favorites!",Toast.LENGTH_LONG).show();
 
 
                 }else{
@@ -268,6 +322,7 @@ public class DetailsActivity extends AppCompatActivity {
                         userFavList.add(rowData);
                         String jsonUserFavList = new Gson().toJson(userFavList);
                         editor.putString("userFavList",jsonUserFavList);
+                        Log.d("user addedd",jsonUserFavList);
 
 
                     }else if(type.equals("place")){
@@ -295,6 +350,7 @@ public class DetailsActivity extends AppCompatActivity {
                     }
 
                         editor.commit();
+                    Toast.makeText(this,"Added to Favorites!",Toast.LENGTH_LONG).show();
 
 
                 }
@@ -304,6 +360,17 @@ public class DetailsActivity extends AppCompatActivity {
                 return true;
             case R.id.share:
 
+                Toast.makeText(this,"Sharing "+rowData.getName()+"!!",Toast.LENGTH_SHORT).show();
+
+                if (ShareDialog.canShow(ShareLinkContent.class)) {
+                    ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                            .setImageUrl(Uri.parse(rowData.getImageURL()))
+                            .setContentTitle(rowData.getName())
+                            .setContentDescription("FB SEARCH FROM USC CSCI571...")
+                            .setContentUrl(Uri.parse("http://www-scf.usc.edu/~sandeshh/homework8/HW8.html"))
+                            .build();
+                    mShareDialog.show(linkContent);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -314,6 +381,11 @@ public class DetailsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mCallBackManager.onActivityResult(requestCode, resultCode, data);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -326,11 +398,27 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if(isFav){
-            menu.findItem(R.id.fav_menu).setTitle("Remove from Favourites");
+            menu.findItem(R.id.fav_menu).setTitle("Remove from Favorites");
         }else{
-            menu.findItem(R.id.fav_menu).setTitle("Add to Favourites");
+            menu.findItem(R.id.fav_menu).setTitle("Add to Favorites");
         }
 
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    private int getIndex(List<ListModel> dataList,String id){
+
+        int index=0;
+
+        for(int j=0;j<dataList.size();j++){
+           if(dataList.get(j).getID().equals(id)){
+               index=j;
+               break;
+           }
+
+        }
+
+        return index;
+
     }
 }
