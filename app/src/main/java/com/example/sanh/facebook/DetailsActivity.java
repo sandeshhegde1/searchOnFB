@@ -307,7 +307,7 @@ public class DetailsActivity extends AppCompatActivity {
                     }
 
                     editor.commit();
-                    Toast.makeText(this,"Removed from Favorites!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,"Removed from Favorites!",Toast.LENGTH_SHORT).show();
 
 
                 }else{
@@ -350,7 +350,7 @@ public class DetailsActivity extends AppCompatActivity {
                     }
 
                         editor.commit();
-                    Toast.makeText(this,"Added to Favorites!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,"Added to Favorites!",Toast.LENGTH_SHORT).show();
 
 
                 }

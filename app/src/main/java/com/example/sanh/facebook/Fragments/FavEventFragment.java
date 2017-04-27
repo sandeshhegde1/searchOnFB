@@ -21,6 +21,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -88,6 +89,7 @@ public class FavEventFragment extends Fragment {
 
             Type type = new TypeToken< List < ListModel >>() {}.getType();
             eventFavListData=new Gson().fromJson(jsonEventFavList, type);
+            Collections.reverse(eventFavListData);
 
             adapter = new FavListAdaptor(getActivity(), eventFavListData);
             eventlv.setAdapter(adapter);

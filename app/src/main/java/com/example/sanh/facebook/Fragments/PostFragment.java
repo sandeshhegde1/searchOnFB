@@ -168,19 +168,28 @@ public class PostFragment extends Fragment {
             }else {
 
                 hasPost=true;
-                JSONArray jArray = jObject.getJSONObject("posts").getJSONArray("data");
 
-                for (int i = 0; i < jArray.length(); i++) {
-                    JSONObject dataObject = jArray.getJSONObject(i);
+                if(jObject.has("posts")&&jObject.getJSONObject("posts").has("data")){
+                    JSONArray jArray = jObject.getJSONObject("posts").getJSONArray("data");
 
-                    String message = dataObject.getString("message");
-                    String time = dataObject.getString("created_time");
+                    for (int i = 0; i < jArray.length(); i++) {
+                        JSONObject dataObject = jArray.getJSONObject(i);
 
-                    PostModel object = new PostModel(id, name, imageURL, time, message, false);
-                    postListData.add(object);
+                        String message ="";
+                        if(dataObject.has("message")) {
+                             message = dataObject.getString("message");
+                        }
+                        String time = dataObject.getString("created_time");
 
+                        PostModel object = new PostModel(id, name, imageURL, time, message, false);
+                        postListData.add(object);
+
+
+                    }
 
                 }
+
+
 
             }
 

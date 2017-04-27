@@ -193,16 +193,21 @@ public class AlbumFragment extends Fragment {
 
                     String name = dataObject.getString("name");
                     nameList.add(name);
-                    JSONArray picArray = dataObject.getJSONObject("photos").getJSONArray("data");
+                    if(dataObject.has("photos")&&dataObject.getJSONObject("photos").has("data")){
 
-                    for(int j=0;j<picArray.length();j++){
+                        JSONArray picArray = dataObject.getJSONObject("photos").getJSONArray("data");
 
-                        JSONObject imageObject = picArray.getJSONObject(j);
-                        String url=imageObject.getJSONArray("images").getJSONObject(0).getString("source");
-                        urlList.add(url);
+                        for(int j=0;j<picArray.length();j++){
 
+                            JSONObject imageObject = picArray.getJSONObject(j);
+                            String url=imageObject.getJSONArray("images").getJSONObject(0).getString("source");
+                            urlList.add(url);
+
+
+                        }
 
                     }
+
 
                     albumListHashMap.put(name,urlList);
                     urlList=new ArrayList<>();

@@ -1,8 +1,13 @@
 package com.example.sanh.facebook;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -14,17 +19,20 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.example.sanh.facebook.Fragments.AboutFragment;
 import com.example.sanh.facebook.Fragments.FavFragment;
 import com.example.sanh.facebook.Fragments.MainFragment;
 
-public class MainActivity extends AppCompatActivity {
+
+
+public class MainActivity extends AppCompatActivity  {
 
     private NavigationView mNavigationView;
     private DrawerLayout mDrawerLayout;
-    private int REQUEST_READWRITE_STORAGE;
+    private LocationManager mLocationManager;
+    private LocationListener mLocationListener;
+    private String mLat;
+    private String mLong;
 
 
     @Override
@@ -32,27 +40,68 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-         //getSharedPreferences("my_pref",MODE_PRIVATE).edit().clear().commit();
+
+        mLat=null;
+        mLong=null;
+
+
+        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        mLocationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+                Log.d("lat:",Double.toString(location.getLatitude()));
+                Log.d("long:",Double.toString(location.getLongitude()));
+
+                mLat=Double.toString(location.getLatitude());
+                mLong=Double.toString(location.getLongitude());
+
+                storeLocation();
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+                Log.d("Location", "status changed = ");
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+                Log.d("Location", "provider enabled = ");
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+                mLat=null;
+                mLong=null;
+                storeLocation();
+                Log.d("Location", "status disabled = ");
+            }
+        };
+
 
 
         //ask for permissions to the user to gain access to the external storage
-        int permissionCheck1 = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
-        int permissionCheck2 = ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-     //   int permissionCheck3 = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
-     //   int permissionCheck4 = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED &&ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED  ) {
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION ,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET},
+                    0);
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
+            return;
+        }else{
+
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
 
 
-        if (permissionCheck1 != PackageManager.PERMISSION_GRANTED || permissionCheck2 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            android.Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_READWRITE_STORAGE);
         }
+
 
 
         setupToolbar();
 
         initNavigationView();
+
 
         //replace framelayout by the main_fragment layout when app opens
         MainFragment mainfragment=new MainFragment();
@@ -149,9 +198,8 @@ public class MainActivity extends AppCompatActivity {
                                 return true;
 
                             case R.id.nav_about:
-                                AboutFragment abtfragment = new AboutFragment();
-                                fragmentTransaction.replace(R.id.frame,abtfragment);
-                                fragmentTransaction.commit();
+                                Intent intent=new Intent(MainActivity.this,AboutActivity.class);
+                                startActivity(intent);
                                 return true;
 
 
@@ -169,6 +217,30 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void storeLocation(){
 
+        SharedPreferences sharedPref=getSharedPreferences("my_pref",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("latitude",mLat);
+        editor.putString("longitude",mLong);
+        editor.commit();
 
+    }
+
+    /*
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+       // super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 10 :
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
+                } else {
+                    Log.d("location", "permission denied");
+                }
+        }
+    }
+    */
 }

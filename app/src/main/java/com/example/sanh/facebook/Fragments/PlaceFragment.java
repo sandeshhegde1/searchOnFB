@@ -1,6 +1,8 @@
 package com.example.sanh.facebook.Fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -61,8 +63,21 @@ public class PlaceFragment extends Fragment {
         View v = inflater.inflate(R.layout.place_fragment,container,false);
         key = getArguments().getString("key");
 
-        //TODO change page to place
-        url_string = "http://sandeshwebtech-env.us-west-2.elasticbeanstalk.com/index.php?input_keyword=" + key + "&select=place&input_location=&submit=TRUE&device=android";
+        SharedPreferences sharedPref=getActivity().getSharedPreferences("my_pref", Context.MODE_PRIVATE);
+        String longitude=sharedPref.getString("longitude", null);
+        String latitude=sharedPref.getString("latitude", null);
+
+        Log.d("place location:",longitude+","+latitude);
+
+
+        if(longitude==null || latitude==null){
+            url_string = "http://sandeshwebtech-env.us-west-2.elasticbeanstalk.com/index.php?input_keyword=" + key + "&select=place&input_location=&submit=TRUE&device=android";
+        }else{
+            url_string = "http://sandeshwebtech-env.us-west-2.elasticbeanstalk.com/index.php?input_keyword=" + key + "&select=place&input_location=&submit=TRUE&device=android&input_location="+latitude+","+longitude;
+
+    }
+
+
         placeListData=new ArrayList<>();
         placelv=(ListView) v.findViewById(R.id.place_listView);
         previous=(Button) v.findViewById(R.id.btn_previous);

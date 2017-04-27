@@ -21,6 +21,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -88,6 +89,7 @@ public class FavPageFragment extends Fragment {
 
             Type type = new TypeToken< List < ListModel >>() {}.getType();
             pageFavListData=new Gson().fromJson(jsonPageFavList, type);
+            Collections.reverse(pageFavListData);
 
             adapter = new FavListAdaptor(getActivity(), pageFavListData);
             pagelv.setAdapter(adapter);
