@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class ListAdaptor extends BaseAdapter {
 
-    private Activity activity;
+    private Context activity;
     private List<ListModel> items;
     private List<String> idFavList;
     private boolean isIdListPresent;
@@ -33,7 +33,7 @@ public class ListAdaptor extends BaseAdapter {
 
 
 
-    public ListAdaptor(Activity activity, List<ListModel> items) {
+    public ListAdaptor(Context activity, List<ListModel> items) {
         this.activity = activity;
         this.items = items;
 

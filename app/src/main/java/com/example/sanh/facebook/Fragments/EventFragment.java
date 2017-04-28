@@ -1,5 +1,6 @@
 package com.example.sanh.facebook.Fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -49,6 +50,7 @@ public class EventFragment extends Fragment {
     private String nextURL;
     private String previousURL;
     private ListAdaptor adapter;
+    private Context context;
 
 
 
@@ -192,7 +194,9 @@ public class EventFragment extends Fragment {
         @Override
         protected void onPostExecute(Void result) {
 
-            adapter = new ListAdaptor(getActivity(), eventListData);
+
+
+            adapter = new ListAdaptor(context, eventListData);
             eventlv.setAdapter(adapter);
             adapter.notifyDataSetChanged();
 
@@ -276,11 +280,17 @@ public class EventFragment extends Fragment {
     public void onResume() {
 
         if(adapter!=null){
-            adapter = new ListAdaptor(getActivity(), eventListData);
+            adapter = new ListAdaptor(context, eventListData);
             eventlv.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }
 
         super.onResume();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        context=getActivity().getApplicationContext();
     }
 }

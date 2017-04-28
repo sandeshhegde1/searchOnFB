@@ -1,5 +1,6 @@
 package com.example.sanh.facebook.Fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.example.sanh.facebook.Adapters.ListAdaptor;
@@ -51,12 +53,14 @@ public class UserFragment extends Fragment {
     private String nextURL;
     private String previousURL;
     private ListAdaptor adapter;
+    private Context context;
 
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
 
 
 
@@ -70,6 +74,8 @@ public class UserFragment extends Fragment {
         previous=(Button) v.findViewById(R.id.btn_previous);
         next=(Button) v.findViewById(R.id.btn_next);
         new getJSON().execute();
+
+
 
 
         //onclick listview
@@ -194,7 +200,8 @@ public class UserFragment extends Fragment {
         @Override
         protected void onPostExecute(Void result) {
 
-            adapter = new ListAdaptor(getActivity(), userListData);
+
+            adapter = new ListAdaptor(context.getApplicationContext(), userListData);
             userlv.setAdapter(adapter);
             adapter.notifyDataSetChanged();
 
@@ -278,11 +285,17 @@ public class UserFragment extends Fragment {
     public void onResume() {
 
         if(adapter!=null){
-            adapter = new ListAdaptor(getActivity(), userListData);
+            adapter = new ListAdaptor(context, userListData);
             userlv.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }
 
         super.onResume();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        context=getActivity().getApplicationContext();
     }
 }
